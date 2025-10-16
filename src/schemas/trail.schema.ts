@@ -42,6 +42,11 @@ export const trailSchema = new EntitySchema<Trail>({
       length: 255,
       nullable: true,
     },
+    gpxFileUrl: {
+      type: "varchar",
+      length: 255,
+      nullable: true,
+    },
     createdAt: {
       type: "timestamp",
       createDate: true,

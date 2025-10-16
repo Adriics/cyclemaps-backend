@@ -7,6 +7,7 @@ export class Trail {
   difficulty: "easy" | "medium" | "hard"
   authorId: string
   imageUrl?: string
+  gpxFileUrl?: string
   createdAt?: Date
   updatedAt?: Date
 
@@ -17,7 +18,8 @@ export class Trail {
     elevationGain: number,
     difficulty: "easy" | "medium" | "hard",
     authorId: string,
-    imageUrl?: string
+    imageUrl?: string,
+    gpxFileUrl?: string
   ) {
     this.name = name
     this.description = description
@@ -26,5 +28,6 @@ export class Trail {
     this.difficulty = difficulty
     this.authorId = authorId
     this.imageUrl = imageUrl
+    this.gpxFileUrl = gpxFileUrl
   }
 }

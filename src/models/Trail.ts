@@ -2,20 +2,22 @@ export class Trail {
   id?: string
   name: string
   description: string
-  distance: string
-  elevationGain: Date
-  difficulty: Date
+  distance: number
+  elevationGain: number
+  difficulty: "easy" | "medium" | "hard"
   authorId: string
-  imageUrl: string
+  imageUrl?: string
+  createdAt?: Date
+  updatedAt?: Date
 
   constructor(
     name: string,
     description: string,
-    distance: string,
-    elevationGain: Date,
-    difficulty: Date,
+    distance: number,
+    elevationGain: number,
+    difficulty: "easy" | "medium" | "hard",
     authorId: string,
-    imageUrl: string
+    imageUrl?: string
   ) {
     this.name = name
     this.description = description

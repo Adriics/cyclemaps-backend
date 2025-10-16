@@ -3,20 +3,12 @@ export class User {
   name: string
   email: string
   password: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
 
-  constructor(
-    name: string,
-    email: string,
-    password: string,
-    createdAt: Date = new Date(),
-    updatedAt: Date = new Date()
-  ) {
+  constructor(name: string, email: string, password: string) {
     this.name = name
     this.email = email
     this.password = password
-    this.createdAt = createdAt
-    this.updatedAt = updatedAt
   }
 }

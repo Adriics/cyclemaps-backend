@@ -1,10 +1,10 @@
 import { Equal } from "typeorm"
 import { User } from "../models/User"
 import dataSource from "../dataSourceConfig"
-import { UserSchema } from "../schemas/user.schema"
+import { userSchema } from "../schemas/user.schema"
 
 export class UserHelper {
-  protected schema = UserSchema
+  protected schema = userSchema
   protected connection = dataSource
 
   async findById(id: string): Promise<User | null> {

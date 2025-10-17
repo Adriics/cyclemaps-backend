@@ -37,6 +37,12 @@ export const trailSchema = new EntitySchema<Trail>({
       type: "uuid",
       nullable: false,
     },
+    hash: {
+      type: "varchar",
+      length: 64,
+      unique: true,
+      nullable: false,
+    },
     imageUrl: {
       type: "varchar",
       length: 255,

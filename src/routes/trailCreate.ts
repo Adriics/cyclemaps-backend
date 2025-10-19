@@ -12,11 +12,13 @@ export function trailCreate(router: Router) {
   controller.run = controller.run.bind(controller)
 
   const upload = multer()
-
   router.post(
     "/trails",
     new AuthMiddleware().check,
-    upload.single("gpxFile"), // <- esto es imprescindible para que req.file exista
+    upload.fields([
+      { name: "gpxFile", maxCount: 1 },
+      { name: "image", maxCount: 1 },
+    ]),
     controller.run
   )
 }

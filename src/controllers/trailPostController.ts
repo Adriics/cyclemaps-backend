@@ -3,22 +3,25 @@ import { TrailService } from "../services/trailService"
 
 export class TrailPostController {
   constructor(private readonly service: TrailService) {}
+
   async run(req: Request, res: Response) {
     try {
-      const file = req.file
+      const gpxFile = (req.files as any)?.["gpxFile"]?.[0]
+      const image = (req.files as any)?.["image"]?.[0]
 
-      if (!file)
+      if (!gpxFile) {
         return res
           .status(400)
-          .json({ message: "No se ha subido ningun archivo .gpx" })
+          .json({ message: "No se ha subido ningún archivo .gpx" })
+      }
 
       const authorId = req.user!.id
       const { name, description, distance, elevationGain, difficulty } =
         req.body
 
-      console.log(req.file)
+      console.log("Archivos recibidos:", { gpxFile, image })
 
-      const trail = await this.service.create(file, {
+      const trail = await this.service.create(gpxFile, image, {
         name,
         description,
         distance: Number(distance),
@@ -29,7 +32,7 @@ export class TrailPostController {
 
       return res.status(201).json({
         ok: true,
-        message: "Trail created succesfully",
+        message: "Trail created successfully",
         data: trail,
       })
     } catch (error: any) {

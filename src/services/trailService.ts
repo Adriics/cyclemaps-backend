@@ -1,7 +1,8 @@
+import { UploadApiResponse } from "cloudinary"
 import { TrailHelper } from "../helpers/TrailHelper"
 import { Trail } from "../models/Trail"
 import crypto from "crypto"
-import { parseStringPromise } from "xml2js"
+import cloudinary from "../config/cloudinary"
 
 export class TrailService {
   constructor(private readonly helper: TrailHelper) {}
@@ -11,7 +12,8 @@ export class TrailService {
   }
 
   async create(
-    file: Express.Multer.File,
+    gpxFile: Express.Multer.File,
+    imageFile: Express.Multer.File | undefined,
     data: {
       name: string
       description: string
@@ -21,21 +23,53 @@ export class TrailService {
       authorId: string
     }
   ): Promise<Trail> {
-    const gpxData = file.buffer.toString("utf8")
+    // 🗺️ Subir archivo GPX a Cloudinary (en carpeta trails_gpx)
+    const gpxUploadResult: UploadApiResponse = await new Promise(
+      (resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            { resource_type: "raw", folder: "trails_gpx" },
+            (error, result) => {
+              if (error) return reject(error)
+              resolve(result!)
+            }
+          )
+          .end(gpxFile.buffer)
+      }
+    )
+
+    const gpxFileUrl = gpxUploadResult.secure_url
+
+    // 🖼️ Subir imagen si existe
+    let imageUrl: string | undefined = undefined
+    if (imageFile) {
+      const imageUploadResult: UploadApiResponse = await new Promise(
+        (resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream({ folder: "trail_images" }, (error, result) => {
+              if (error) return reject(error)
+              resolve(result!)
+            })
+            .end(imageFile.buffer)
+        }
+      )
+
+      imageUrl = imageUploadResult.secure_url
+    }
+
+    // 🔐 Generar hash único del GPX
+    const gpxData = gpxFile.buffer.toString("utf8")
     const hashSum = crypto.createHash("sha256")
     hashSum.update(gpxData)
     const hash = hashSum.digest("hex")
 
-    // 🔍 Comprobamos si ya existe un trail con ese hash
+    // 🔍 Evitar duplicados
     const existing = await this.helper.findByHash(hash)
     if (existing) {
       throw new Error("This trail file already exists")
     }
 
-    // 📦 Creamos la URL (puede ser en uploads local o S3)
-    const imageUrl = `/uploads/${file.originalname}`
-
-    // 🧱 Creamos la instancia del Trail
+    // 🧱 Crear entidad
     const trail = new Trail(
       data.name,
       data.description,
@@ -43,11 +77,11 @@ export class TrailService {
       data.elevationGain || 0,
       data.difficulty,
       data.authorId,
-      imageUrl
+      hash,
+      imageUrl,
+      gpxFileUrl
     )
-    trail.hash = hash // nuevo campo en el modelo
 
-    // 💾 Guardamos en la base de datos
     return await this.helper.create(trail)
   }
 }

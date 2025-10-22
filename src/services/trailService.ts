@@ -3,6 +3,7 @@ import { TrailHelper } from "../helpers/TrailHelper"
 import { Trail } from "../models/Trail"
 import crypto from "crypto"
 import cloudinary from "../config/cloudinary"
+import { calculateDistanceFromGpx } from "../utils/gpxUtils"
 
 export class TrailService {
   constructor(private readonly helper: TrailHelper) {}
@@ -40,6 +41,10 @@ export class TrailService {
 
     const gpxFileUrl = gpxUploadResult.secure_url
 
+    // 📏 Calcular distancia desde el GPX
+    const gpxData = gpxFile.buffer.toString("utf8")
+    const distance = calculateDistanceFromGpx(gpxData)
+
     // 🖼️ Subir imagen si existe
     let imageUrl: string | undefined = undefined
     if (imageFile) {
@@ -58,7 +63,6 @@ export class TrailService {
     }
 
     // 🔐 Generar hash único del GPX
-    const gpxData = gpxFile.buffer.toString("utf8")
     const hashSum = crypto.createHash("sha256")
     hashSum.update(gpxData)
     const hash = hashSum.digest("hex")
@@ -73,7 +77,7 @@ export class TrailService {
     const trail = new Trail(
       data.name,
       data.description,
-      data.distance || 0,
+      distance,
       data.elevationGain || 0,
       data.difficulty,
       data.authorId,

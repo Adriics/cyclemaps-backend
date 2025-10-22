@@ -7,6 +7,8 @@ export class TrailsGetController {
   async run(req: Request, res: Response) {
     const trails = await this.service.getTrails()
 
+    console.log("Trails enviados al frontend:", trails)
+
     if (!trails)
       return res.status(400).json({
         ok: false,

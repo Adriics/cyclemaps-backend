@@ -1,8 +1,11 @@
 import { XMLParser } from "fast-xml-parser"
 
-export function calculateDistanceFromGpx(gpxData: string): number {
+export function calculateDistanceFromGpx(
+  gpxData: string
+): { distance: number; elevationGain: number } | 0 {
   try {
     let distanciaTotal = 0
+    let elevationGain = 0
 
     const parser = new XMLParser({ ignoreAttributes: false })
     const json = parser.parse(gpxData)
@@ -24,9 +27,17 @@ export function calculateDistanceFromGpx(gpxData: string): number {
     console.log("Estos son los trkpt:", trkpt)
 
     trkpt.forEach((pts: any) => {
+      console.log("Estos son los pts:", pts)
       for (let i = 1; i < pts.length; i++) {
         const prev = pts[i - 1]
         const curr = pts[i]
+
+        const prevElev = prev?.ele ? parseFloat(prev.ele) : 0
+        const currElev = curr?.ele ? parseFloat(curr.ele) : 0
+
+        if (currElev > prevElev) {
+          elevationGain += currElev - prevElev
+        }
 
         const distancia = haverSine(
           parseFloat(prev["@_lat"]),
@@ -37,7 +48,10 @@ export function calculateDistanceFromGpx(gpxData: string): number {
         distanciaTotal += distancia
       }
     })
-    return Number((distanciaTotal / 1000).toFixed(2))
+    return {
+      distance: Number((distanciaTotal / 1000).toFixed(2)),
+      elevationGain: Number(elevationGain.toFixed(0)),
+    }
   } catch (error) {
     console.error("Error al calcular distancia:", error)
     return 0

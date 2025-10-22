@@ -43,7 +43,12 @@ export class TrailService {
 
     // 📏 Calcular distancia desde el GPX
     const gpxData = gpxFile.buffer.toString("utf8")
-    const distance = calculateDistanceFromGpx(gpxData)
+
+    const distanceResult = calculateDistanceFromGpx(gpxData)
+    if (distanceResult === 0) {
+      throw new Error("Invalid GPX data")
+    }
+    const { distance, elevationGain } = distanceResult
 
     // 🖼️ Subir imagen si existe
     let imageUrl: string | undefined = undefined
@@ -78,7 +83,7 @@ export class TrailService {
       data.name,
       data.description,
       distance,
-      data.elevationGain || 0,
+      elevationGain,
       data.difficulty,
       data.authorId,
       hash,

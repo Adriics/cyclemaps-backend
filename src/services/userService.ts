@@ -3,6 +3,7 @@ import { UserHelper } from "../helpers/UserHelper"
 import { User } from "../models/User"
 import jwt from "jsonwebtoken"
 import { UserNotFound } from "../errors/UserNotFound"
+import { getUserById } from "../routes/getUserById"
 
 export class UserService {
   constructor(private readonly userHelper: UserHelper) {}
@@ -46,5 +47,9 @@ export class UserService {
     )
 
     return token
+  }
+
+  async getUserById(id: string): Promise<User | null> {
+    return this.userHelper.findById(id)
   }
 }

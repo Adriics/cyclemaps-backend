@@ -59,4 +59,50 @@ export class TrailHelper {
       hash: Equal(hash),
     }) as Promise<Trail | null>
   }
+
+  async findById(id: string) {
+    const repository = (await this.connection).getRepository(this.schema)
+
+    const rawTrail = await repository
+      .createQueryBuilder("trail")
+      .leftJoin("user", "user", "trail.authorId = user.id")
+      .select([
+        "trail.id",
+        "trail.name",
+        "trail.description",
+        "trail.distance",
+        "trail.elevationGain",
+        "trail.difficulty",
+        "trail.authorId",
+        "trail.hash",
+        "trail.imageUrl",
+        "trail.gpxFileUrl",
+        "trail.coordinates",
+        "trail.createdAt",
+        "trail.updatedAt",
+        "user.name as authorName",
+      ])
+      .where("trail.id = :id", { id })
+      .getRawOne()
+
+    if (!rawTrail) return null
+
+    // Mapear igual que en findAll()
+    return {
+      id: rawTrail.trail_id,
+      name: rawTrail.trail_name,
+      description: rawTrail.trail_description,
+      distance: rawTrail.trail_distance,
+      elevationGain: rawTrail.trail_elevationGain,
+      difficulty: rawTrail.trail_difficulty,
+      authorId: rawTrail.trail_authorId,
+      hash: rawTrail.trail_hash,
+      imageUrl: rawTrail.trail_imageUrl,
+      gpxFileUrl: rawTrail.trail_gpxFileUrl,
+      coordinates: rawTrail.trail_coordinates,
+      createdAt: rawTrail.trail_createdAt,
+      updatedAt: rawTrail.trail_updatedAt,
+      authorName: rawTrail.authorname,
+    } as Trail
+  }
 }

@@ -48,7 +48,7 @@ export class TrailService {
     if (distanceResult === 0) {
       throw new Error("Invalid GPX data")
     }
-    const { distance, elevationGain } = distanceResult
+    const { distance, elevationGain, coordinates } = distanceResult
 
     // 🖼️ Subir imagen si existe
     let imageUrl: string | undefined = undefined
@@ -86,11 +86,17 @@ export class TrailService {
       elevationGain,
       data.difficulty,
       data.authorId,
+      undefined,
       hash,
       imageUrl,
-      gpxFileUrl
+      gpxFileUrl,
+      coordinates
     )
 
     return await this.helper.create(trail)
+  }
+
+  async getById(id: string): Promise<Trail | null> {
+    return this.helper.findById(id)
   }
 }

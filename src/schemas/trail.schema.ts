@@ -53,6 +53,10 @@ export const trailSchema = new EntitySchema<Trail>({
       length: 255,
       nullable: true,
     },
+    coordinates: {
+      type: "jsonb",
+      nullable: true,
+    },
     createdAt: {
       type: "timestamp",
       createDate: true,

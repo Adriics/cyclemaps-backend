@@ -4,6 +4,7 @@ import { userLogin } from "./userLogin"
 import { getTrails } from "./getTrails"
 import { trailCreate } from "./trailCreate"
 import { getUserById } from "./getUserById"
+import { getTrailById } from "./getTrailById"
 
 export function registerRoutes(router: Router): Router {
   userRegister(router)
@@ -11,6 +12,7 @@ export function registerRoutes(router: Router): Router {
   trailCreate(router)
   getTrails(router)
   getUserById(router)
+  getTrailById(router)
 
   return router
 }

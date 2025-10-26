@@ -2,10 +2,13 @@ import { XMLParser } from "fast-xml-parser"
 
 export function calculateDistanceFromGpx(
   gpxData: string
-): { distance: number; elevationGain: number } | 0 {
+):
+  | { distance: number; elevationGain: number; coordinates: [number, number][] }
+  | 0 {
   try {
     let distanciaTotal = 0
     let elevationGain = 0
+    const coordinates: [number, number][] = []
 
     const parser = new XMLParser({ ignoreAttributes: false })
     const json = parser.parse(gpxData)
@@ -28,29 +31,44 @@ export function calculateDistanceFromGpx(
 
     trkpt.forEach((pts: any) => {
       console.log("Estos son los pts:", pts)
-      for (let i = 1; i < pts.length; i++) {
-        const prev = pts[i - 1]
+      for (let i = 0; i < pts.length; i++) {
         const curr = pts[i]
 
-        const prevElev = prev?.ele ? parseFloat(prev.ele) : 0
-        const currElev = curr?.ele ? parseFloat(curr.ele) : 0
-
-        if (currElev > prevElev) {
-          elevationGain += currElev - prevElev
+        if (i % 10 === 0) {
+          coordinates.push([
+            parseFloat(curr["@_lon"]),
+            parseFloat(curr["@_lat"]),
+          ])
         }
 
-        const distancia = haverSine(
-          parseFloat(prev["@_lat"]),
-          parseFloat(prev["@_lon"]),
-          parseFloat(curr["@_lat"]),
-          parseFloat(curr["@_lon"])
-        )
-        distanciaTotal += distancia
+        // Calcular distancia y elevación (solo desde i=1)
+        if (i > 0) {
+          const prev = pts[i - 1]
+
+          const prevElev = prev?.ele ? parseFloat(prev.ele) : 0
+          const currElev = curr?.ele ? parseFloat(curr.ele) : 0
+
+          if (currElev > prevElev) {
+            elevationGain += currElev - prevElev
+          }
+
+          const distancia = haverSine(
+            parseFloat(prev["@_lat"]),
+            parseFloat(prev["@_lon"]),
+            parseFloat(curr["@_lat"]),
+            parseFloat(curr["@_lon"])
+          )
+          distanciaTotal += distancia
+        }
       }
     })
+
+    console.log(`✅ Coordenadas extraídas: ${coordinates.length} puntos`) // ← AÑADIDO
+
     return {
       distance: Number((distanciaTotal / 1000).toFixed(2)),
       elevationGain: Number(elevationGain.toFixed(0)),
+      coordinates,
     }
   } catch (error) {
     console.error("Error al calcular distancia:", error)

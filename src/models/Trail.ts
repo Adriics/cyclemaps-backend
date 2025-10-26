@@ -10,6 +10,7 @@ export class Trail {
   hash?: string
   imageUrl?: string
   gpxFileUrl?: string
+  coordinates?: [number, number][] // ← AÑADIR ESTO
   createdAt?: Date
   updatedAt?: Date
 
@@ -23,7 +24,8 @@ export class Trail {
     authorName?: string,
     hash?: string,
     imageUrl?: string,
-    gpxFileUrl?: string
+    gpxFileUrl?: string,
+    coordinates?: [number, number][]
   ) {
     this.name = name
     this.description = description
@@ -35,5 +37,6 @@ export class Trail {
     this.hash = hash
     this.imageUrl = imageUrl
     this.gpxFileUrl = gpxFileUrl
+    this.coordinates = coordinates
   }
 }

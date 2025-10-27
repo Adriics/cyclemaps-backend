@@ -10,7 +10,7 @@ export class Trail {
   hash?: string
   imageUrl?: string
   gpxFileUrl?: string
-  coordinates?: [number, number][] // ← AÑADIR ESTO
+  coordinates?: [number, number][]
   createdAt?: Date
   updatedAt?: Date
 

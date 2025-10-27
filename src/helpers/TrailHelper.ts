@@ -13,6 +13,7 @@ export class TrailHelper {
     const rawTrails = await repository
       .createQueryBuilder("trail")
       .leftJoin("user", "user", "trail.authorId = user.id")
+      .leftJoin("trail_like", "trail_like", "trail.id = trail_like.trailId")
       .select([
         "trail.id",
         "trail.name",
@@ -28,6 +29,9 @@ export class TrailHelper {
         "trail.updatedAt",
         "user.name as authorName",
       ])
+      .addSelect("COUNT(trail_like.id)", "likeCount")
+      .groupBy("trail.id")
+      .addGroupBy("user.name")
       .getRawMany()
 
     // Mapear los campos con prefijos trail_ a camelCase
@@ -44,7 +48,8 @@ export class TrailHelper {
       gpxFileUrl: trail.trail_gpxFileUrl,
       createdAt: trail.trail_createdAt,
       updatedAt: trail.trail_updatedAt,
-      authorName: trail.authorname, // ← authorname en minúsculas
+      authorName: trail.authorname,
+      likeCount: parseInt(trail.likeCount, 0),
     }))
   }
 

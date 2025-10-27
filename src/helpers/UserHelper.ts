@@ -9,16 +9,16 @@ export class UserHelper {
 
   async findById(id: string): Promise<User | null> {
     return dataSource
-      .getRepository("User")
+      .getRepository(this.schema)
       .findOneBy({ id }) as Promise<User | null>
   }
 
   async create(user: User): Promise<User> {
-    return dataSource.getRepository("User").save(user) as Promise<User>
+    return dataSource.getRepository(this.schema).save(user) as Promise<User>
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return dataSource.getRepository("User").findOneBy({
+    return dataSource.getRepository(this.schema).findOneBy({
       email: Equal(email),
     }) as Promise<User | null>
   }

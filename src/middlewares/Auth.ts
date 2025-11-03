@@ -22,3 +22,12 @@ export class AuthMiddleware {
     }
   }
 }
+
+export const authenticate = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const middleware = new AuthMiddleware()
+  middleware.check(req, res, next)
+}

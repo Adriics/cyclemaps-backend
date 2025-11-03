@@ -45,4 +45,12 @@ export class TrailLikeHelper {
 
     return result.affected ? result.affected > 0 : false
   }
+
+  async getLikedTrailsByUser(userId: string) {
+    const repository = (await this.connection).getRepository(this.schema)
+
+    const likedTrails = repository.findBy({ userId: Equal(userId) })
+
+    return likedTrails
+  }
 }

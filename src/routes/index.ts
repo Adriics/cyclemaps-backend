@@ -6,6 +6,7 @@ import { trailCreate } from "./trailCreate"
 import { getUserById } from "./getUserById"
 import { getTrailById } from "./getTrailById"
 import { trailLikePost } from "./trailLikePost"
+import { getProfile } from "./getProfile"
 
 export function registerRoutes(router: Router): Router {
   userRegister(router)
@@ -15,6 +16,7 @@ export function registerRoutes(router: Router): Router {
   getUserById(router)
   getTrailById(router)
   trailLikePost(router)
+  getProfile(router)
 
   return router
 }

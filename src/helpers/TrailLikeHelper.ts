@@ -23,4 +23,26 @@ export class TrailLikeHelper {
       trailId,
     })
   }
+
+  async findTrailLike(authorId: string, trailId: string) {
+    const repository = (await this.connection).getRepository(this.schema)
+
+    const existsLike = await repository.findOneBy({
+      userId: Equal(authorId),
+      trailId: Equal(trailId),
+    } as any)
+
+    return existsLike
+  }
+
+  async deleteTrailLike(authorId: string, trailId: string) {
+    const repository = (await this.connection).getRepository(this.schema)
+
+    const result = await repository.delete({
+      userId: Equal(authorId),
+      trailId: Equal(trailId),
+    })
+
+    return result.affected ? result.affected > 0 : false
+  }
 }

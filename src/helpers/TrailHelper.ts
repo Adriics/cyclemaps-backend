@@ -34,7 +34,6 @@ export class TrailHelper {
       .addGroupBy("user.name")
       .getRawMany()
 
-    // Mapear los campos con prefijos trail_ a camelCase
     return rawTrails.map((trail) => ({
       id: trail.trail_id,
       name: trail.trail_name,
@@ -92,7 +91,6 @@ export class TrailHelper {
 
     if (!rawTrail) return null
 
-    // Mapear igual que en findAll()
     return {
       id: rawTrail.trail_id,
       name: rawTrail.trail_name,

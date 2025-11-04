@@ -14,8 +14,7 @@ export class AuthMiddleware {
 
     try {
       const data: any = jwt.verify(token, process.env.JWT_SECRET!)
-      // <-- aquí ponemos req.user para que tu controlador lo use
-      ;(req as any).user = { id: data.id } // cast corto para TS
+      ;(req as any).user = { id: data.id }
       next()
     } catch (err) {
       res.status(401).send()

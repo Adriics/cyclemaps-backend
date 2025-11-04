@@ -3,7 +3,6 @@ import { UserHelper } from "../helpers/UserHelper"
 import { User } from "../models/User"
 import jwt from "jsonwebtoken"
 import { UserNotFound } from "../errors/UserNotFound"
-import { getUserById } from "../routes/getUserById"
 
 export class UserService {
   constructor(private readonly userHelper: UserHelper) {}
@@ -15,7 +14,6 @@ export class UserService {
   }
 
   async create(name: string, email: string, password: string) {
-    // Buscar por email en lugar de id
     const exists = await this.userHelper.findByEmail(email)
 
     if (exists) throw new Error("User already exists")
@@ -43,7 +41,8 @@ export class UserService {
       {
         id: user.id,
       },
-      process.env.JWT_SECRET!
+      process.env.JWT_SECRET!,
+      { expiresIn: "30d" }
     )
 
     return token

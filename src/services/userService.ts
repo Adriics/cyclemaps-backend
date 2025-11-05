@@ -51,4 +51,19 @@ export class UserService {
   async getUserById(id: string): Promise<User | null> {
     return this.userHelper.findById(id)
   }
+
+  async createFromGoogle(name: string, email: string, picture?: string) {
+    let user = await this.userHelper.findByEmail(email)
+
+    if (!user) {
+      const newUser = new User(name, email, undefined, picture, "google")
+      user = await this.userHelper.create(newUser)
+    }
+
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+      expiresIn: "30d",
+    })
+
+    return token
+  }
 }

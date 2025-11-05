@@ -13,13 +13,25 @@ export const userSchema = new EntitySchema<User>({
     },
     name: {
       type: "varchar",
+      nullable: false,
     },
     email: {
       type: "varchar",
       unique: true,
+      nullable: false,
     },
     password: {
       type: "varchar",
+      nullable: true, // 👈 ahora puede ser null (usuarios Google)
+    },
+    picture: {
+      type: "varchar",
+      nullable: true, // 👈 foto de perfil del usuario (Google o futura)
+    },
+    provider: {
+      type: "varchar",
+      nullable: true, // 👈 'google', 'local', 'github', etc.
+      default: "local",
     },
     createdAt: {
       type: "timestamp",
@@ -31,10 +43,11 @@ export const userSchema = new EntitySchema<User>({
     },
   },
   relations: {
-    /*  routes: {
-      type: "one-to-many",
-      target: "Route",
-      inverseSide: "user",
-    }, */
+    // Si más adelante un usuario tiene rutas, puedes reactivar esto:
+    // routes: {
+    //   type: "one-to-many",
+    //   target: "Route",
+    //   inverseSide: "user",
+    // },
   },
 })

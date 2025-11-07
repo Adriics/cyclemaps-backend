@@ -15,9 +15,16 @@ export class UserLoginController {
     try {
       const token = await this.service.login(email, password)
 
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // SOLO HTTPS EN PROD
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      })
+
       res.status(200).json({
         ok: true,
-        token: token,
+        message: "User logged in succesfully",
       })
     } catch (error) {
       console.log(error)

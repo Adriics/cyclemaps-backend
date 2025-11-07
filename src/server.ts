@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes"
 import express, { Express, Router } from "express"
 import dataSource from "./dataSourceConfig"
 import cors from "cors"
+import cookieParser from "cookie-parser"
 
 export function server() {
   const app: Express = express()
@@ -13,6 +14,7 @@ export function server() {
       credentials: true,
     })
   )
+  app.use(cookieParser())
 
   dataSource
     .initialize()

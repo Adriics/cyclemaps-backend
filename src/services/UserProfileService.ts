@@ -2,6 +2,7 @@
 import { UserHelper } from "../helpers/UserHelper"
 import { TrailHelper } from "../helpers/TrailHelper"
 import { TrailLikeHelper } from "../helpers/TrailLikeHelper"
+import { Trail } from "../models/Trail"
 
 export class UserProfileService {
   constructor(
@@ -15,18 +16,23 @@ export class UserProfileService {
 
     if (!user) return null
 
-    const createdTrails = await this.trailHelper.getTrailsByAuthor(userId)
-    const likedTrails = await this.trailLikeHelper.getLikedTrailsByUser(userId)
+    const createdTrails: Trail[] = await this.trailHelper.findByAuthorId(userId)
+    const likedTrailLikes = await this.trailLikeHelper.findTrailsLikedByUser(
+      userId
+    )
+    const likedTrails: Trail[] = likedTrailLikes
+      .map((tl) => tl.trail!)
+      .filter(Boolean)
 
     const stats = {
       trailsCreated: createdTrails.length,
       trailsLiked: likedTrails.length,
       totalDistance: createdTrails.reduce(
-        (sum, trail) => sum + trail.distance,
+        (sum: number, trail: Trail) => sum + trail.distance,
         0
       ),
       totalElevation: createdTrails.reduce(
-        (sum, trail) => sum + trail.elevationGain,
+        (sum: number, trail: Trail) => sum + trail.elevationGain,
         0
       ),
     }

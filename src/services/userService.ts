@@ -6,7 +6,6 @@ import { UserNotFound } from "../errors/UserNotFound"
 
 export class UserService {
   constructor(private readonly userHelper: UserHelper) {}
-
   async hashPassword(password: string): Promise<string> {
     const hashGeneratos = createHmac("sha512", "salt")
     const hash = hashGeneratos.update(password).digest("hex")

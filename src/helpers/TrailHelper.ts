@@ -109,7 +109,7 @@ export class TrailHelper {
     } as Trail
   }
 
-  async getTrailsByAuthor(authorId: string) {
+  async findByAuthorId(authorId: string) {
     const repository = (await this.connection).getRepository(this.schema)
 
     const trail = await repository.findBy({ authorId: Equal(authorId) })

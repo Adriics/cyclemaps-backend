@@ -53,4 +53,16 @@ export class TrailLikeHelper {
 
     return likedTrails
   }
+
+  async countByUserId(userId: string) {
+    return dataSource
+      .getRepository(trailLikeSchema)
+      .count({ where: { userId } })
+  }
+
+  async findTrailsLikedByUser(userId: string) {
+    return dataSource
+      .getRepository(trailLikeSchema)
+      .find({ where: { userId }, relations: ["trail"] })
+  }
 }

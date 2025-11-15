@@ -12,8 +12,10 @@ export function server() {
     cors({
       origin: ["http://localhost:3000", "https://cyclemaps.vercel.app"],
       credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"],
     })
   )
+
   app.use(cookieParser())
 
   dataSource

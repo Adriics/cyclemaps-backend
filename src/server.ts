@@ -11,6 +11,7 @@ export function server() {
   app.use(
     cors({
       origin: ["http://localhost:3000", "https://cyclemaps.vercel.app"],
+      credentials: true,
     })
   )
   app.use(cookieParser())

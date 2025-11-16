@@ -10,7 +10,7 @@ export function server() {
   app.use(json())
   app.use(
     cors({
-      origin: ["http://localhost:3000", "https://cyclemaps.vercel.app"],
+      origin: true, // ⚠️ Solo para debugging, permite cualquier origen
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],
     })

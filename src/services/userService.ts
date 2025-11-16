@@ -52,17 +52,30 @@ export class UserService {
   }
 
   async createFromGoogle(name: string, email: string, picture?: string) {
-    let user = await this.userHelper.findByEmail(email)
+    try {
+      console.log("🔵 Buscando usuario:", email) // ← LOG
 
-    if (!user) {
-      const newUser = new User(name, email, undefined, picture, "google")
-      user = await this.userHelper.create(newUser)
+      let user = await this.userHelper.findByEmail(email)
+
+      if (!user) {
+        console.log("🔵 Usuario no existe, creando...") // ← LOG
+        const newUser = new User(name, email, undefined, picture, "google")
+        user = await this.userHelper.create(newUser)
+        console.log("🟢 Usuario creado:", user.id) // ← LOG
+      } else {
+        console.log("🟢 Usuario encontrado:", user.id) // ← LOG
+      }
+
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+        expiresIn: "30d",
+      })
+
+      console.log("🟢 JWT generado exitosamente") // ← LOG
+
+      return token
+    } catch (error) {
+      console.error("❌ Error en createFromGoogle:", error) // ← LOG
+      throw error
     }
-
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: "30d",
-    })
-
-    return token
   }
 }

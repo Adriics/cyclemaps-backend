@@ -69,7 +69,7 @@ export class TrailHelper {
 
     const rawTrail = await repository
       .createQueryBuilder("trail")
-      .leftJoin("user", "user", "trail.authorId = user.id")
+      .leftJoin("users", "u", "trail.authorId = u.id")
       .select([
         "trail.id",
         "trail.name",
@@ -84,7 +84,7 @@ export class TrailHelper {
         "trail.coordinates",
         "trail.createdAt",
         "trail.updatedAt",
-        "user.name as authorName",
+        "u.name as authorName",
       ])
       .where("trail.id = :id", { id })
       .getRawOne()
@@ -105,7 +105,7 @@ export class TrailHelper {
       coordinates: rawTrail.trail_coordinates,
       createdAt: rawTrail.trail_createdAt,
       updatedAt: rawTrail.trail_updatedAt,
-      authorName: rawTrail.authorname,
+      authorName: rawTrail.authorName,
     } as Trail
   }
 

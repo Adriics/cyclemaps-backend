@@ -12,7 +12,7 @@ export class TrailHelper {
 
     const rawTrails = await repository
       .createQueryBuilder("trail")
-      .leftJoin("user", "u", "trail.authorId = u.id")
+      .leftJoin("users", "u", "trail.authorId = u.id")
       .leftJoin("trail_like", "tl", "trail.id = tl.trailId")
       .select([
         "trail.id AS id",

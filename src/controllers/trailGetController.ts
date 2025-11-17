@@ -17,7 +17,10 @@ export class TrailGetController {
       res.status(200).json(trailData)
     } catch (error) {
       console.error("Error fetching trail by ID:", error)
-      res.status(500).json({ message: "Internal server error" })
+      res.status(500).json({
+        message:
+          error instanceof Error ? error.message : "Internal server error",
+      })
     }
   }
 }

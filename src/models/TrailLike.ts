@@ -6,7 +6,7 @@ export class TrailLike {
   userId: string
   trailId: string
   createdAt?: Date
-  user?: User
+  users?: User
   trail?: Trail
 
   constructor(userId: string, trailId: string) {

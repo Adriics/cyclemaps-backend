@@ -25,7 +25,7 @@ export const trailLikeSchema = new EntitySchema<TrailLike>({
     },
   },
   relations: {
-    user: {
+    users: {
       type: "many-to-one",
       target: "User",
       joinColumn: { name: "user_id" },

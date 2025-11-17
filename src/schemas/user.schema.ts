@@ -3,7 +3,7 @@ import { User } from "../models/User"
 
 export const userSchema = new EntitySchema<User>({
   name: "User",
-  tableName: "user",
+  tableName: "users",
   target: User,
   columns: {
     id: {

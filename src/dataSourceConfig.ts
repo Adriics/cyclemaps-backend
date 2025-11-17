@@ -8,6 +8,7 @@ const dataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   synchronize: true,
+  dropSchema: true,
   logging: true,
   entities: [__dirname + "/**/*.schema.{ts,js}"],
   migrations: ["src/persistence/**/*.ts"],

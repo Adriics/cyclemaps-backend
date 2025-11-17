@@ -12,43 +12,43 @@ export class TrailHelper {
 
     const rawTrails = await repository
       .createQueryBuilder("trail")
-      .leftJoin("user", "user", "trail.authorId = user.id")
-      .leftJoin("trail_like", "trail_like", "trail.id = trail_like.trailId")
+      .leftJoin("user", "u", "trail.authorId = u.id")
+      .leftJoin("trail_like", "tl", "trail.id = tl.trailId")
       .select([
-        "trail.id",
-        "trail.name",
-        "trail.description",
-        "trail.distance",
-        "trail.elevationGain",
-        "trail.difficulty",
-        "trail.authorId",
-        "trail.hash",
-        "trail.imageUrl",
-        "trail.gpxFileUrl",
-        "trail.createdAt",
-        "trail.updatedAt",
-        "user.name as authorName",
+        "trail.id AS id",
+        "trail.name AS name",
+        "trail.description AS description",
+        "trail.distance AS distance",
+        "trail.elevationGain AS elevationGain",
+        "trail.difficulty AS difficulty",
+        "trail.authorId AS authorId",
+        "trail.hash AS hash",
+        "trail.imageUrl AS imageUrl",
+        "trail.gpxFileUrl AS gpxFileUrl",
+        "trail.createdAt AS createdAt",
+        "trail.updatedAt AS updatedAt",
+        "u.name AS authorName",
       ])
-      .addSelect("COUNT(trail_like.id)", "likeCount")
+      .addSelect("COUNT(tl.id)", "likeCount")
       .groupBy("trail.id")
-      .addGroupBy("user.name")
+      .addGroupBy("u.name")
       .getRawMany()
 
-    return rawTrails.map((trail) => ({
-      id: trail.trail_id,
-      name: trail.trail_name,
-      description: trail.trail_description,
-      distance: trail.trail_distance,
-      elevationGain: trail.trail_elevationGain,
-      difficulty: trail.trail_difficulty,
-      authorId: trail.trail_authorId,
-      hash: trail.trail_hash,
-      imageUrl: trail.trail_imageUrl,
-      gpxFileUrl: trail.trail_gpxFileUrl,
-      createdAt: trail.trail_createdAt,
-      updatedAt: trail.trail_updatedAt,
-      authorName: trail.authorname,
-      likeCount: parseInt(trail.likeCount, 0),
+    return rawTrails.map((t) => ({
+      id: t.id,
+      name: t.name,
+      description: t.description,
+      distance: t.distance,
+      elevationGain: t.elevationGain,
+      difficulty: t.difficulty,
+      authorId: t.authorId,
+      hash: t.hash,
+      imageUrl: t.imageUrl,
+      gpxFileUrl: t.gpxFileUrl,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+      authorName: t.authorName,
+      likeCount: parseInt(t.likeCount ?? "0"),
     }))
   }
 

@@ -29,8 +29,8 @@ export function server() {
 
   app.use("/v1/cyclemaps", endpoints)
 
-  app.listen(5004, () => {
-    console.log("Server is running on port 5004")
+  app.listen(process.env.PORT || 5004, () => {
+    console.log(`Server running on port ${process.env.PORT || 5004}`)
   })
 }
 server()

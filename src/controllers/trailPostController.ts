@@ -6,8 +6,13 @@ export class TrailPostController {
 
   async run(req: Request, res: Response) {
     try {
+      console.log("✅ req.body:", req.body)
+      console.log("✅ req.files:", req.files)
+
       const gpxFile = (req.files as any)?.["gpxFile"]?.[0]
       const imageFile = (req.files as any)?.["imageFile"]?.[0]
+
+      console.log("✅ Archivos seleccionados:", { gpxFile, imageFile })
 
       if (!gpxFile) {
         return res
@@ -19,8 +24,6 @@ export class TrailPostController {
       const { name, description, distance, elevationGain, difficulty } =
         req.body
 
-      console.log("Archivos recibidos:", { gpxFile, imageFile })
-
       const trail = await this.service.create(gpxFile, imageFile, {
         name,
         description,
@@ -30,13 +33,15 @@ export class TrailPostController {
         authorId,
       })
 
+      console.log("✅ Trail creado con éxito:", trail)
+
       return res.status(201).json({
         ok: true,
         message: "Trail created successfully",
         data: trail,
       })
     } catch (error: any) {
-      console.error(error)
+      console.error("❌ Error en TrailPostController:", error)
       res.status(400).json({
         ok: false,
         message: error.message || "Error creating trail",

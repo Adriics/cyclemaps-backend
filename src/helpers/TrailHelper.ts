@@ -8,6 +8,7 @@ export class TrailHelper {
   protected connection = dataSource
 
   async findAll(): Promise<any[]> {
+    
     const repository = (await this.connection).getRepository(this.schema)
 
     const rawTrails = await repository
@@ -33,6 +34,8 @@ export class TrailHelper {
       .groupBy("trail.id")
       .addGroupBy("u.name")
       .getRawMany()
+    
+      console.log(rawTrails[0])
 
     return rawTrails.map((t) => ({
       id: t.id,

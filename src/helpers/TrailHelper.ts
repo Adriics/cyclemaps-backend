@@ -8,9 +8,8 @@ export class TrailHelper {
   protected connection = dataSource
 
   async findAll(): Promise<any[]> {
-    
     const repository = (await this.connection).getRepository(this.schema)
-
+  
     const rawTrails = await repository
       .createQueryBuilder("trail")
       .leftJoin("users", "u", "trail.authorId = u.id")
@@ -34,26 +33,32 @@ export class TrailHelper {
       .groupBy("trail.id")
       .addGroupBy("u.name")
       .getRawMany()
-    
-      console.log(rawTrails[0])
-
-    return rawTrails.map((t) => ({
-      id: t.id,
-      name: t.name,
-      description: t.description,
-      distance: t.distance,
-      elevationGain: t.elevationGain,
-      difficulty: t.difficulty,
-      authorId: t.authorId,
-      hash: t.hash,
-      imageUrl: t.imageUrl,
-      gpxFileUrl: t.gpxFileUrl,
-      createdAt: t.createdAt,
-      updatedAt: t.updatedAt,
-      authorName: t.authorName,
-      likeCount: parseInt(t.likeCount ?? "0"),
-    }))
+  
+    return rawTrails.map((t) => {
+      const get = (camel: string, lower?: string, prefixed?: string) =>
+        t[camel] ?? t[lower ?? camel.toLowerCase()] ?? t[prefixed ?? camel.toLowerCase()]
+  
+      return {
+        id: get("id"),
+        name: get("name"),
+        description: get("description"),
+        distance: get("distance"),
+        // elevationGain puede venir como elevationgain o trail_elevationGain según query
+        elevationGain: get("elevationGain", "elevationgain", "trail_elevationgain") ?? undefined,
+        difficulty: get("difficulty"),
+        authorId: get("authorId", "authorid", "trail_authorid") ?? undefined,
+        hash: get("hash"),
+        // imageUrl puede venir como imageurl
+        imageUrl: get("imageUrl", "imageurl", "trail_imageurl") ?? undefined,
+        gpxFileUrl: get("gpxFileUrl", "gpxfileurl", "trail_gpxfileurl") ?? undefined,
+        createdAt: get("createdAt", "createdat", "trail_createdat") ?? undefined,
+        updatedAt: get("updatedAt", "updatedat", "trail_updatedat") ?? undefined,
+        authorName: get("authorName", "authorname", "u_name") ?? undefined,
+        likeCount: parseInt(get("likeCount", "likecount", "count") ?? "0", 10),
+      }
+    })
   }
+  
 
   async create(trail: Trail) {
     const repository = (await this.connection).getRepository(this.schema)
@@ -69,7 +74,7 @@ export class TrailHelper {
 
   async findById(id: string) {
     const repository = (await this.connection).getRepository(this.schema)
-
+  
     const rawTrail = await repository
       .createQueryBuilder("trail")
       .leftJoin("users", "u", "trail.authorId = u.id")
@@ -91,26 +96,30 @@ export class TrailHelper {
       ])
       .where("trail.id = :id", { id })
       .getRawOne()
-
+  
     if (!rawTrail) return null
-
+  
+    const get = (camel: string, lower?: string, prefixed?: string) =>
+      rawTrail[camel] ?? rawTrail[lower ?? camel.toLowerCase()] ?? rawTrail[prefixed ?? camel.toLowerCase()]
+  
     return {
-      id: rawTrail.trail_id,
-      name: rawTrail.trail_name,
-      description: rawTrail.trail_description,
-      distance: rawTrail.trail_distance,
-      elevationGain: rawTrail.trail_elevationGain,
-      difficulty: rawTrail.trail_difficulty,
-      authorId: rawTrail.trail_authorId,
-      hash: rawTrail.trail_hash,
-      imageUrl: rawTrail.trail_imageUrl,
-      gpxFileUrl: rawTrail.trail_gpxFileUrl,
-      coordinates: rawTrail.trail_coordinates,
-      createdAt: rawTrail.trail_createdAt,
-      updatedAt: rawTrail.trail_updatedAt,
-      authorName: rawTrail.authorName,
+      id: get("trail_id", "id", "trail_id") ?? get("id"),
+      name: get("trail_name", "name", "trail_name") ?? get("name"),
+      description: get("trail_description", "description") ?? get("description"),
+      distance: get("trail_distance", "distance") ?? get("distance"),
+      elevationGain: get("trail_elevationGain", "elevationgain") ?? undefined,
+      difficulty: get("trail_difficulty", "difficulty") ?? get("difficulty"),
+      authorId: get("trail_authorId", "authorid") ?? undefined,
+      hash: get("trail_hash", "hash") ?? get("hash"),
+      imageUrl: get("trail_imageUrl", "imageurl") ?? undefined,
+      gpxFileUrl: get("trail_gpxFileUrl", "gpxfileurl") ?? undefined,
+      coordinates: rawTrail["trail_coordinates"] ?? rawTrail["coordinates"] ?? undefined,
+      createdAt: rawTrail["trail_createdAt"] ?? rawTrail["createdat"] ?? undefined,
+      updatedAt: rawTrail["trail_updatedAt"] ?? rawTrail["updatedat"] ?? undefined,
+      authorName: rawTrail["authorName"] ?? rawTrail["authorname"] ?? rawTrail["u_name"] ?? undefined,
     } as Trail
   }
+  
 
   async findByAuthorId(authorId: string) {
     const repository = (await this.connection).getRepository(this.schema)

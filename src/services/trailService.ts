@@ -53,29 +53,19 @@ export class TrailService {
     // 🖼️ Subir imagen si existe
     let imageUrl: string | undefined = undefined
     if (imageFile) {
-      console.log("🌟 Subiendo imagen a Cloudinary...")
       const imageUploadResult: UploadApiResponse = await new Promise(
         (resolve, reject) => {
           cloudinary.uploader
             .upload_stream({ folder: "trail_images" }, (error, result) => {
-              if (error) {
-                console.error("❌ Error subiendo imagen a Cloudinary:", error)
-                return reject(error)
-              }
+              if (error) return reject(error)
               resolve(result!)
             })
             .end(imageFile.buffer)
         }
       )
-    
-      imageUrl = imageUploadResult.secure_url
-      console.log("🌟 Imagen subida correctamente:", imageUrl)
-    } else {
-      console.log("⚠️ No se recibió imagen, imageFile es undefined")
-    }
 
-    console.log("imageFile:", imageFile)
-    console.log("imageUrl:", imageUrl)
+      imageUrl = imageUploadResult.secure_url
+    }
 
     // 🔐 Generar hash único del GPX
     const hashSum = crypto.createHash("sha256")
